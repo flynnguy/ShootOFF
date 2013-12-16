@@ -673,15 +673,6 @@ class MainWindow:
             # Webcam related threads will end when this is true
             self._shutdown = False
 
-            #Start the refresh loop that shows the webcam feed
-            self._refresh_thread = Thread(target=self.refresh_frame,
-                                          name="refresh_thread")
-            self._refresh_thread.start()
-
-            #Start the shot detection loop
-            self._shot_detection_thread = Thread(target=self.detect_shots,
-                                                 name="shot_detection_thread")
-            self._shot_detection_thread.start()
         else:
             tkMessageBox.showerror("Couldn't Connect to Webcam", "Video capturing " +
                 "could not be initialized either because there is no webcam or " +
@@ -691,18 +682,18 @@ class MainWindow:
             self._shutdown = True
 
     def main(self):
+        #Start the refresh loop that shows the webcam feed
+        self._refresh_thread = Thread(target=self.refresh_frame, name="refresh_thread")
+        self._refresh_thread.start()
+
+        #Start the shot detection loop
+        self._shot_detection_thread = Thread(target=self.detect_shots, name="shot_detection_thread")
+        self._shot_detection_thread.start()
         if not self._shutdown:
             Tkinter.mainloop()
             self._window.destroy()
 
 if __name__ == "__main__":
-    config = Configurator()
-
-    preferences = config.get_preferences()
-    logger = config.get_logger()
-
-    logger.debug(preferences)
-
     # Start the main window
-    mainWindow = MainWindow(config)
+    mainWindow = MainWindow(Configurator())
     mainWindow.main()
